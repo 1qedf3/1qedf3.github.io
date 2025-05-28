@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Sheet Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
+        .generator-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select,
+        .form-group textarea {
+            width: calc(100% - 12px); /* Account for padding */
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .ability-scores-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #eaf0f4;
+            border-radius: 5px;
+        }
+        .ability-score-input-item {
+            text-align: center;
+            flex: 1; /* Allows them to distribute space */
+            min-width: 60px; /* Minimum width for each item */
+        }
+        .ability-score-input-item label {
+            font-size: 0.9em;
+            margin-bottom: 3px;
+        }
+        .ability-score-input-item input {
+            width: 40px;
+            text-align: center;
+            padding: 5px;
+        }
+        .skills-input-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .skills-input-table th, .skills-input-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .skills-input-table th {
+            background-color: #34495e;
+            color: white;
+        }
+        .skills-input-table td input {
+            width: 50px;
+            padding: 3px;
+            text-align: center;
+        }
+        .skills-input-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .button-group button {
+            padding: 12px 25px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .button-group button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="generator-container">
+        <h1>Character Sheet Generator</h1>
+        <p>Fill out the details below to generate your character sheet!</p>
+
+        <form id="characterForm">
+            <div class="form-group">
+                <label for="charName">Character Name:</label>
+                <input type="text" id="charName" placeholder="e.g., Sir Reginald the Brave" required>
+            </div>
+
+            <div class="form-group">
+                <label for="charClass">Class Name:</label>
+                <input type="text" id="charClass" placeholder="e.g., Paladin of Light" required>
+            </div>
+
+            <div class="form-group">
+                <label>Ability Scores:</label>
+                <div class="ability-scores-input">
+                    <div class="ability-score-input-item">
+                        <label for="genStr">STR</label>
+                        <input type="number" id="genStr" value="10" min="1" max="30">
+                    </div>
+                    <div class="ability-score-input-item">
+                        <label for="genDex">DEX</label>
+                        <input type="number" id="genDex" value="10" min="1" max="30">
+                    </div>
+                    <div class="ability-score-input-item">
+                        <label for="genCon">CON</label>
+                        <input type="number" id="genCon" value="10" min="1" max="30">
+                    </div>
+                    <div class="ability-score-input-item">
+                        <label for="genInt">INT</label>
+                        <input type="number" id="genInt" value="10" min="1" max="30">
+                    </div>
+                    <div class="ability-score-input-item">
+                        <label for="genWis">WIS</label>
+                        <input type="number" id="genWis" value="10" min="1" max="30">
+                    </div>
+                    <div class="ability-score-input-item">
+                        <label for="genCha">CHA</label>
+                        <input type="number" id="genCha" value="10" min="1" max="30">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="baseAttack">Base Attack Type:</label>
+                <select id="baseAttack">
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="strongSaves">Strong Saves:</label>
+                <input type="text" id="strongSaves" placeholder="e.g., Fortitude, Reflex, Will">
+            </div>
+
+            <div class="form-group">
+                <label for="specialAbilities">Special Abilities (Level by Level - one per line):</label>
+                <textarea id="specialAbilities" rows="10" placeholder="e.g.,
+1st: Lay on Hands (1d6 healing, X uses/day), Divine Bond (Mount or Weapon), Detect Evil
+2nd: Smite Evil (1/day), Courage +1
+3rd: Mercy (Remove fear), Armor Training 1
+..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Skills (Enter Total and Ranks):</label>
+                <table class="skills-input-table">
+                    <thead>
+                        <tr>
+                            <th>Skill</th>
+                            <th>Total</th>
+                            <th>Ranks</th>
+                            <th>Mod</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: bold;">Agility</td>
+                            <td><input type="number" class="skill-total" data-skill="agility" value="0"></td>
+                            <td><input type="number" class="skill-ranks" value="0"></td>
+                            <td>DEX</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">Acrobatics, Fly</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Athletics</td>
+                            <td><input type="number" class="skill-total" data-skill="athletics" value="0"></td>
+                            <td><input type="number" class="skill-ranks" value="0"></td>
+                            <td>STR</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">Climb, Jump, Swim</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Influence</td>
+                            <td><input type="number" class="skill-total" data-skill="influence" value="0"></td>
+                            <td><input type="number" class="skill-ranks" value="0"></td>
+                            <td>CHA</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">Diplomacy, Intimidate</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Ecology</td>
+                            <td><input type="number" class="skill-total" data-skill="ecology" value="0"></td>
+                            <td><input type="number" class="skill-ranks" value="0"></td>
+                            <td>INT</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">Dungeoneering, Geography, Nature</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Performance</td>
+                            <td><input type="number" class="skill-total" data-skill="performance" value="0"></td>
+                            <td><input type="number" class="skill-ranks" value="0"></td>
+                            <td>CHA</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">Bluff, Disguise, Perform</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Secrecy</td>
+                            <td><input type="number" class="skill-total" data-skill="secrecy" value="0"></td>
+                            <td><input type="number" class="skill-ranks" value="0"></td>
+                            <td>DEX</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">Sleight of Hand, Stealth</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Senses</td>
+                            <td><input type="number" class="skill-total" data-skill="senses" value="0"></td>
+                            <td><input type="number" class="skill-ranks" value="0"></td>
+                            <td>WIS</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">Perception, Sense Motive</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Society</td>
+                            <td><input type="number" class="skill-total" data-skill="society" value="0"></td>
+                            <td><input type="number" class="skill-ranks" value="0"></td>
+                            <td>INT</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">History, Local, Nobility, Linguistics</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Sorcery</td>
+                            <td><input type="number" class="skill-total" data-skill="sorcery" value="0"></td>
+                            <td><input type="number" class="skill-ranks" value="0"></td>
+                            <td>INT</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">Arcana, Spellcraft, Use Magic Device</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Survivability</td>
+                            <td><input type="number" class="skill-total" data-skill="survivability" value="0"></td>
+                            <td><input type="number" class="skill-ranks" value="0"></td>
+                            <td>WIS</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">Heal, Survival</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Taming</td>
+                            <td><input type="number" class="skill-total" data-skill="taming" value="0"></td>
+                            <td><input type="number" class="skill-ranks" value="0"></td>
+                            <td>CHA</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">Ride, Handle Animal</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Technology</td>
+                            <td><input type="number" class="skill-total" data-skill="technology" value="0"></td>
+                            <td><input type="number" class="skill-ranks" value="0"></td>
+                            <td>INT</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">Engineering, Disable Device</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Theology</td>
+                            <td><input type="number" class="skill-total" data-skill="theology" value="0"></td>
+                            <td><input type="number" class="skill-ranks" value="0"></td>
+                            <td>INT</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">Planes, Religion</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Trade</td>
+                            <td><input type="number" class="skill-total" data-skill="trade" value="0"></td>
+                            <td><input type="number" class="skill-ranks" value="0"></td>
+                            <td>WIS</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">Appraise, Craft, Profession</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-group">
+                <label for="characterImageURL">Character Image URL:</label>
+                <input type="text" id="characterImageURL" placeholder="Optional: Paste image URL here (e.g., https://example.com/mycharacter.jpg)">
+            </div>
+
+            <div class="form-group">
+                <label for="imageDescription">Image Description:</label>
+                <textarea id="imageDescription" rows="2" placeholder="Optional: A short description for the image."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="charDescription">Character Description:</label>
+                <textarea id="charDescription" rows="10" placeholder="Write your character's history, personality, appearance, motivations, etc."></textarea>
+            </div>
+
+            <div class="button-group">
+                <button type="submit">Generate Character Sheet</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('characterForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Gather data from the form
+            const charName = document.getElementById('charName').value;
+            const charClass = document.getElementById('charClass').value;
+
+            const strScore = document.getElementById('genStr').value;
+            const dexScore = document.getElementById('genDex').value;
+            const conScore = document.getElementById('genCon').value;
+            const intScore = document.getElementById('genInt').value;
+            const wisScore = document.getElementById('genWis').value;
+            const chaScore = document.getElementById('genCha').value;
+
+            const baseAttack = document.getElementById('baseAttack').value;
+            const strongSaves = document.getElementById('strongSaves').value;
+            const specialAbilitiesText = document.getElementById('specialAbilities').value;
+            const characterImageURL = document.getElementById('characterImageURL').value;
+            const imageDescription = document.getElementById('imageDescription').value;
+            const charDescription = document.getElementById('charDescription').value;
+
+            // Prepare special abilities HTML
+            let specialAbilitiesHTML = '';
+            const abilitiesLines = specialAbilitiesText.split('\n').filter(line => line.trim() !== '');
+            if (abilitiesLines.length > 0) {
+                abilitiesLines.forEach(line => {
+                    const parts = line.split(':');
+                    if (parts.length >= 2) {
+                        const level = parts[0].trim();
+                        const description = parts.slice(1).join(':').trim();
+                        specialAbilitiesHTML += `<tr><td>${level}</td><td>${description}</td></tr>`;
+                    } else {
+                        // Handle lines without a colon (e.g., if just a paragraph)
+                        specialAbilitiesHTML += `<tr><td colspan="2">${line.trim()}</td></tr>`;
+                    }
+                });
+            } else {
+                // If no abilities entered, show default placeholder
+                specialAbilitiesHTML = `
+                    <tr><td>1st</td><td>[Level 1 Traits]</td></tr>
+                    <tr><td>2nd</td><td>[Level 2 Traits]</td></tr>
+                    <tr><td>3rd</td><td>[Level 3 Traits]</td></tr>
+                    <tr><td>4th</td><td>[Level 4 Traits]</td></tr>
+                    <tr><td>5th</td><td>[Level 5 Traits]</td></tr>
+                    <tr><td>6th</td><td>[Level 6 Traits]</td></tr>
+                    <tr><td>7th</td><td>[Level 7 Traits]</td></tr>
+                    <tr><td>8th</td><td>[Level 8 Traits]</td></tr>
+                    <tr><td>9th</td><td>[Level 9 Traits]</td></tr>
+                    <tr><td>10th</td><td>[Level 10 Traits]</td></tr>
+                    <tr><td>11th</td><td>[Level 11 Traits]</td></tr>
+                    <tr><td>12th</td><td>[Level 12 Traits]</td></tr>
+                    <tr><td>13th</td><td>[Level 13 Traits]</td></tr>
+                    <tr><td>14th</td><td>[Level 14 Traits]</td></tr>
+                    <tr><td>15th</td><td>[Level 15 Traits]</td></tr>
+                `;
+            }
+
+
+            // Prepare skills HTML (only for skills with Total or Ranks > 0)
+            let skillsHTML = '';
+            const skillRows = document.querySelectorAll('.skills-input-table tbody tr');
+            let hasSkills = false; // Flag to check if any skills are entered
+
+            skillRows.forEach(row => {
+                const skillNameCell = row.querySelector('td:first-child');
+                const totalInput = row.querySelector('.skill-total');
+                const ranksInput = row.querySelector('.skill-ranks');
+                const modCell = row.querySelector('td:last-child');
+
+                if (skillNameCell && (totalInput || ranksInput)) { // Check if it's a skill row
+                    const skillName = skillNameCell.textContent.trim();
+                    const totalValue = totalInput ? totalInput.value : '';
+                    const ranksValue = ranksInput ? ranksInput.value : '';
+                    const modValue = modCell ? modCell.textContent.trim() : '';
+
+                    if (totalValue !== '0' || ranksValue !== '0') { // Only include if total or ranks are not zero
+                        skillsHTML += `
+                            <tr>
+                                <td style="font-weight: bold;">${skillName}</td>
+                                <td><input type="text" size="2" maxlength="2" value="${totalValue}"></td>
+                                <td><input type="text" size="2" maxlength="2" value="${ranksValue}"></td>
+                                <td>${modValue}</td>
+                            </tr>
+                        `;
+                        // Also include the descriptive row that follows
+                        const nextRow = row.nextElementSibling;
+                        if (nextRow && nextRow.querySelector('td[colspan="4"]')) {
+                            skillsHTML += nextRow.outerHTML;
+                        }
+                        hasSkills = true;
+                    }
+                }
+            });
+
+            if (!hasSkills) {
+                // If no skills were entered, add a default message or the full table structure with inputs
+                 skillsHTML = `
+                    <tr><td colspan="4">No skills entered.</td></tr>
+                    <tr>
+                        <td style="font-weight: bold;">Agility</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>DEX</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Acrobatics, Fly</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Athletics</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>STR</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Climb, Jump, Swim</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Influence</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>CHA</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Diplomacy, Intimidate</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Ecology</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>INT</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Dungeoneering, Geography, Nature</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Performance</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>CHA</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Bluff, Disguise, Perform</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Secrecy</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>DEX</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Sleight of Hand, Stealth</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Senses</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>WIS</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Perception, Sense Motive</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Society</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>INT</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">History, Local, Nobility, Linguistics</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Sorcery</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>INT</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Arcana, Spellcraft, Use Magic Device</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Survivability</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>WIS</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Heal, Survival</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Taming</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>CHA</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Ride, Handle Animal</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Technology</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>INT</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Engineering, Disable Device</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Theology</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>INT</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Planes, Religion</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Trade</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>WIS</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Appraise, Craft, Profession</td>
+                    </tr>
+                 `;
+            }
+
+
+            // Read the template file
+            fetch('character_sheet_template.html')
+                .then(response => response.text())
+                .then(templateHtml => {
+                    // Create a temporary div to parse the template HTML
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(templateHtml, 'text/html');
+
+                    // Update the elements using their IDs
+                    doc.getElementById('sheetTitle').textContent = `${charName} - ${charClass}`;
+                    doc.getElementById('characterNameDisplay').textContent = charName;
+                    doc.getElementById('classNameDisplay').textContent = charClass;
+
+                    doc.getElementById('strScore').value = strScore;
+                    doc.getElementById('dexScore').value = dexScore;
+                    doc.getElementById('conScore').value = conScore;
+                    doc.getElementById('intScore').value = intScore;
+                    doc.getElementById('wisScore').value = wisScore;
+                    doc.getElementById('chaScore').value = chaScore;
+
+                    doc.getElementById('baseAttackDisplay').textContent = baseAttack;
+                    doc.getElementById('strongSavesDisplay').textContent = strongSaves;
+
+                    doc.getElementById('specialAbilitiesBody').innerHTML = specialAbilitiesHTML;
+
+                    // Update image and description if URL is provided
+                    const characterImageElement = doc.getElementById('characterImage');
+                    const imageDescriptionElement = doc.getElementById('imageDescriptionDisplay');
+                    if (characterImageURL.trim() !== '') {
+                        characterImageElement.src = characterImageURL;
+                        characterImageElement.alt = charName + " image"; // More descriptive alt text
+                        imageDescriptionElement.textContent = imageDescription.trim() !== '' ? imageDescription : `Image of ${charName}`;
+                    } else {
+                        // Use placeholder if no image URL
+                        characterImageElement.src = "https://via.placeholder.com/300x400?text=Character+Image";
+                        characterImageElement.alt = "Placeholder image for character";
+                        imageDescriptionElement.textContent = imageDescription.trim() !== '' ? imageDescription : "*(You can add a small description for the image here if you wish)*";
+                    }
+
+                    // Update skills table
+                    doc.getElementById('skillsTableBody').innerHTML = skillsHTML;
+                    // Remove the skills heading note if skills were entered
+                    if (hasSkills) {
+                        const skillsHeadingNote = doc.getElementById('skillsHeadingNote');
+                        if (skillsHeadingNote) {
+                            skillsHeadingNote.remove();
+                        }
+                    }
+
+                    // Update character description
+                    const descriptionParagraphs = charDescription.split('\n\n').filter(p => p.trim() !== ''); // Split by double newline for paragraphs
+                    const descriptionContainer = doc.getElementById('characterDescriptionContent').parentNode; // Get parent of first P
+                    descriptionContainer.innerHTML = '<h3>Character Description</h3>'; // Clear existing and re-add heading
+
+                    if (descriptionParagraphs.length > 0) {
+                        descriptionParagraphs.forEach(paragraph => {
+                            const p = doc.createElement('p');
+                            p.textContent = paragraph.trim();
+                            descriptionContainer.appendChild(p);
+                        });
+                    } else {
+                        const p1 = doc.createElement('p');
+                        p1.textContent = "[Here you can write a detailed description of your character: their history, personality, appearance, motivations, etc.]";
+                        const p2 = doc.createElement('p');
+                        p2.textContent = "[Continue writing anything else you consider relevant for your character.]";
+                        descriptionContainer.appendChild(p1);
+                        descriptionContainer.appendChild(p2);
+                    }
+
+
+                    // Open the generated sheet in a new window
+                    const newWindow = window.open();
+                    newWindow.document.write(doc.documentElement.outerHTML);
+                    newWindow.document.close(); // Close the document stream
+                    newWindow.focus(); // Bring the new window to the foreground
+                })
+                .catch(error => {
+                    console.error('Error fetching or processing template:', error);
+                    alert('Could not generate character sheet. Please ensure "character_sheet_template.html" is in the same directory.');
+                });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="sheetTitle">[Character Name] - [Class Name]</title>
+    <style>
+        /* --- General Body and Container Styles --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap; /* Allows elements to wrap on smaller screens */
+            gap: 20px; /* Space between blocks */
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Header Styles --- */
+        .header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1, .header h2 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        /* --- Ability Scores Styles --- */
+        .ability-scores {
+            width: 100%; /* Take full width */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #eaf0f4;
+            border-radius: 8px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        }
+
+        .ability-score-item {
+            text-align: center;
+            padding: 10px 15px;
+            border: 1px solid #cce7ff;
+            border-radius: 5px;
+            background-color: #f7fbff;
+            min-width: 80px; /* Ensure consistent width */
+        }
+
+        .ability-score-item strong {
+            display: block;
+            font-size: 1.1em;
+            color: #34495e;
+            margin-bottom: 5px;
+        }
+
+        .ability-score-item input {
+            width: 50px;
+            padding: 5px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 1em;
+        }
+
+        /* --- Character Info and Image Styles --- */
+        .character-info,
+        .character-image,
+        .skills-section {
+            flex: 1; /* Allows blocks to grow and shrink */
+            min-width: 300px; /* Minimum width to prevent collapsing too much */
+        }
+
+        .character-image {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .character-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        /* --- Character Description Styles --- */
+        .character-description {
+            width: 100%;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .character-description h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        /* --- Table Styles --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden; /* Ensures rounded borders apply to the table */
+        }
+
+        th, td {
+            border: 1px solid #bdc3c7;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #34495e;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        tr:nth-child(even) {
+            background-color: #e0e6e7;
+        }
+
+        tr:hover {
+            background-color: #d5dbdb;
+        }
+
+        .table-preamble {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* Specific styles for the skills table */
+        .skills-section table {
+            font-size: 12px;
+        }
+
+        .skills-section input[type="text"] {
+            width: 30px; /* Adjusts input width for skill values */
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 2px;
+        }
+
+        /* --- Print Specific Styles --- */
+        @media print {
+            body {
+                margin: 0;
+                background-color: #fff;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-size: 9.5pt; /* Smaller base font size for print */
+            }
+
+            @page {
+                size: letter;
+                margin: 0.4in 0.6in; /* Tighter margins for printing */
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 0;
+                width: 100%;
+                max-width: 100%;
+                display: grid; /* Use CSS Grid for fixed layout */
+                /* Define grid columns and rows to fit content */
+                grid-template-columns: 1fr 0.7fr; /* Two columns: 1st wider, 2nd for image/skills */
+                grid-template-rows: auto auto auto auto; /* Auto for header, ability, then two rows for content */
+                gap: 5px 10px; /* Smaller gap between grid items */
+            }
+
+            .header {
+                grid-column: 1 / -1; /* Header spans all columns */
+                text-align: center;
+                margin-bottom: 5px;
+                padding: 0 5px;
+            }
+
+            .header h1 {
+                font-size: 1.8em; /* Adjusted header font size */
+                margin-bottom: 2px;
+            }
+
+            .header h2 {
+                font-size: 1.2em; /* Adjusted header font size */
+                margin-bottom: 5px;
+            }
+
+            .ability-scores {
+                grid-column: 1 / -1; /* Ability scores span all columns */
+                display: flex; /* Keep flex for items within ability scores */
+                flex-wrap: nowrap; /* Prevent wrapping if possible */
+                justify-content: center;
+                gap: 8px; /* Tighter gap between ability score items */
+                margin-bottom: 8px;
+                padding: 5px; /* Reduced padding */
+                box-shadow: none; /* Remove shadow for print */
+                border: 1px solid #eee; /* Light border for definition */
+            }
+
+            .ability-score-item {
+                text-align: center;
+                padding: 3px 5px; /* Reduced padding */
+                border: none; /* Remove border for cleaner print */
+                background-color: transparent; /* Transparent background */
+                min-width: 45px; /* Fixed smaller width */
+                font-size: 0.9em;
+            }
+
+            .ability-score-item strong {
+                font-size: 0.9em;
+                margin-bottom: 1px;
+            }
+
+            .ability-score-item input {
+                width: 30px; /* Fixed smaller input width */
+                padding: 1px;
+                border: none; /* Remove border */
+                background-color: transparent;
+                text-align: center;
+                font-size: 0.9em;
+            }
+
+            .character-info {
+                grid-column: 1 / 2; /* Character Info in the first column */
+                min-width: auto;
+                padding: 0 5px;
+                margin-bottom: 5px;
+            }
+
+            .character-image {
+                grid-column: 2 / 3; /* Character Image in the second column */
+                text-align: center;
+                padding: 0 5px;
+                margin-bottom: 5px;
+                justify-content: flex-start; /* Align image to top of its grid cell */
+                align-items: flex-start;
+            }
+
+            .character-image img {
+                max-width: 150px; /* Even smaller image size */
+                height: auto;
+                box-shadow: none;
+                border-radius: 4px;
+                margin: 0 auto 5px auto; /* Centered with less bottom margin */
+                display: block;
+            }
+
+            .character-image p {
+                font-size: 0.7em; /* Smallest text for image description */
+                margin: 0;
+                line-height: 1.2;
+            }
+
+            .skills-section {
+                grid-column: 2 / 3; /* Skills section in the second column, below image */
+                min-width: auto;
+                padding: 0 5px;
+                margin-top: 5px; /* Small margin to separate from image */
+            }
+
+            .character-description {
+                grid-column: 1 / -1; /* Description spans all columns at the bottom */
+                padding: 5px; /* Reduced padding */
+                margin-top: 5px; /* Reduced top margin */
+                border-top: 1px dashed #ddd; /* Lighter separator */
+            }
+
+            .character-description h3 {
+                font-size: 1.1em;
+                margin-bottom: 5px;
+            }
+
+            .character-description p {
+                font-size: 0.85em; /* Smaller font for description text */
+                margin-bottom: 5px;
+                line-height: 1.4;
+            }
+
+            /* Table specific adjustments for print */
+            table {
+                background-color: #fff;
+                border-radius: 0;
+                margin-top: 5px; /* Tighter table margin */
+                page-break-inside: avoid; /* Try to keep tables on one page */
+            }
+            th, td {
+                border: 1px solid #eee; /* Lighter, thinner borders */
+                padding: 4px 6px; /* Very tight padding for table cells */
+                font-size: 0.8em; /* Smaller font for general table content */
+                line-height: 1.2;
+            }
+            th {
+                background-color: #f8f8f8; /* Very light header background */
+                color: #555;
+                font-weight: normal; /* Less bold headers */
+                text-transform: none; /* No uppercase for headers */
+            }
+            tr:nth-child(even) {
+                background-color: #fafafa; /* Very light alternating rows */
+            }
+            tr:hover {
+                background-color: #f5f5f5;
+            }
+
+            .table-preamble {
+                margin-top: 5px;
+                font-size: 0.85em;
+                font-weight: normal;
+                color: #555;
+            }
+
+            .skills-section table {
+                font-size: 0.75em; /* Even smaller font for skill table */
+            }
+
+            .skills-section input[type="text"] {
+                width: 20px; /* Very narrow inputs */
+                padding: 0;
+                font-size: 0.8em;
+                text-align: center;
+                border: none;
+                background-color: transparent;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="characterNameDisplay">[Character Name]</h1>
+            <h2 id="classNameDisplay">[Class Name]</h2>
+        </div>
+
+        <div class="ability-scores">
+            <div class="ability-score-item">
+                <strong>STR</strong>
+                <input type="text" size="2" maxlength="2" value="10" id="strScore">
+            </div>
+            <div class="ability-score-item">
+                <strong>DEX</strong>
+                <input type="text" size="2" maxlength="2" value="10" id="dexScore">
+            </div>
+            <div class="ability-score-item">
+                <strong>CON</strong>
+                <input type="text" size="2" maxlength="2" value="10" id="conScore">
+            </div>
+            <div class="ability-score-item">
+                <strong>INT</strong>
+                <input type="text" size="2" maxlength="2" value="10" id="intScore">
+            </div>
+            <div class="ability-score-item">
+                <strong>WIS</strong>
+                <input type="text" size="2" maxlength="2" value="10" id="wisScore">
+            </div>
+            <div class="ability-score-item">
+                <strong>CHA</strong>
+                <input type="text" size="2" maxlength="2" value="10" id="chaScore">
+            </div>
+        </div>
+        <div class="character-info">
+            <div class="table-preamble">
+                <p><strong>Base Attack:</strong> <span id="baseAttackDisplay">[Base Attack Type: High / Medium / Low]</span></p>
+                <p><strong>Strong Saves:</strong> <span id="strongSavesDisplay">[Strong Saves: Fortitude / Reflex / Will]</span></p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Level</th>
+                        <th>Special</th>
+                    </tr>
+                </thead>
+                <tbody id="specialAbilitiesBody">
+                    <tr>
+                        <td>1st</td>
+                        <td>[Level 1 Traits: e.g., Lay on Hands (1d6 healing, X uses/day), Divine Bond (Mount or Weapon), Detect Evil]</td>
+                    </tr>
+                    <tr>
+                        <td>2nd</td>
+                        <td>[Level 2 Traits: e.g., Smite Evil (1/day), Courage +1]</td>
+                    </tr>
+                    <tr>
+                        <td>3rd</td>
+                        <td>[Level 3 Traits: e.g., Mercy (Remove fear), Armor Training 1]</td>
+                    </tr>
+                    <tr>
+                        <td>4th</td>
+                        <td>[Level 4 Traits: e.g., Cure Disease (1/week), Bonus Feat]</td>
+                    </tr>
+                    <tr>
+                        <td>5th</td>
+                        <td>[Level 5 Traits: e.g., Divine Bond (weapon +1 bonus, Holy)]</td>
+                    </tr>
+                    <tr>
+                        <td>6th</td>
+                        <td>[Level 6 Traits: e.g., Mercy (Remove stunned), Courage +2]</td>
+                    </tr>
+                    <tr>
+                        <td>7th</td>
+                        <td>[Level 7 Traits: e.g., Armor Training 2]</td>
+                    </tr>
+                    <tr>
+                        <td>8th</td>
+                        <td>[Level 8 Traits: e.g., Bonus Feat, Aura of Resolve]</td>
+                    </tr>
+                    <tr>
+                        <td>9th</td>
+                        <td>[Level 9 Traits: e.g., Mercy (Remove disease), Weapon Training 2]</td>
+                    </tr>
+                    <tr>
+                        <td>10th</td>
+                        <td>[Level 10 Traits: e.g., Courage +3]</td>
+                    </tr>
+                    <tr>
+                        <td>11th</td>
+                        <td>[Level 11 Traits: e.g., Armor Training 3]</td>
+                    </tr>
+                    <tr>
+                        <td>12th</td>
+                        <td>[Level 12 Traits: e.g., Bonus Feat]</td>
+                    </tr>
+                    <tr>
+                        <td>13th</td>
+                        <td>[Level 13 Traits: e.g., Weapon Training 3]</td>
+                    </tr>
+                    <tr>
+                        <td>14th</td>
+                        <td>[Level 14 Traits: e.g., Courage +4]</td>
+                    </tr>
+                    <tr>
+                        <td>15th</td>
+                        <td>[Level 15 Traits: e.g., Armor Mastery, Weapon Mastery (choose weapon)]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="character-image">
+            <img src="https://via.placeholder.com/300x400?text=Character+Image" alt="Reference image of the character" id="characterImage">
+            <p id="imageDescriptionDisplay">*(You can add a small description for the image here if you wish)*</p>
+        </div>
+
+        <div class="skills-section">
+            <div class="table-preamble">
+                <h3>Skills <span id="skillsHeadingNote">[only show skills chosen by the character]</span></h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Skill</th>
+                        <th>Total</th>
+                        <th>Ranks</th>
+                        <th>Mod</th>
+                    </tr>
+                </thead>
+                <tbody id="skillsTableBody">
+                    <tr>
+                        <td style="font-weight: bold;">Agility</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>DEX</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Acrobatics, Fly</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Athletics</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>STR</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Climb, Jump, Swim</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Influence</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>CHA</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Diplomacy, Intimidate</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Ecology</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>INT</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Dungeoneering, Geography, Nature</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Performance</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>CHA</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Bluff, Disguise, Perform</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Secrecy</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>DEX</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Sleight of Hand, Stealth</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Senses</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>WIS</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Perception, Sense Motive</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Society</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>INT</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">History, Local, Nobility, Linguistics</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Sorcery</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>INT</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Arcana, Spellcraft, Use Magic Device</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Survivability</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>WIS</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Heal, Survival</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Taming</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>CHA</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Ride, Handle Animal</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Technology</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>INT</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Engineering, Disable Device</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Theology</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>INT</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Planes, Religion</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Trade</td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td><input type="text" size="2" maxlength="2"></td>
+                        <td>WIS</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Appraise, Craft, Profession</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="character-description">
+            <h3 id="characterDescriptionHeading">Character Description</h3>
+            <p id="characterDescriptionContent">[Here you can write a detailed description of your character: their history, personality, appearance, motivations, etc.]</p>
+            <p id="characterDescriptionContent2">[Continue writing anything else you consider relevant for your character.]</p>
+        </div>
+    </div>
+</body>
+</html>
